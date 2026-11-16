@@ -1,4 +1,5 @@
 import useVideos from "../hooks/useVideos";
+import VideoCard from "../components/VideoCard";
 
 export default function VideoChooser() {
     const { videos, loading, error } = useVideos();
@@ -15,7 +16,7 @@ export default function VideoChooser() {
             <div className="video-list">
                 {videos.map((video) => (
                     <div key={video} className="video-card">
-                        {video}
+                        <VideoCard key={video} filename={video} />
                     </div>
                 ))}
             </div>
