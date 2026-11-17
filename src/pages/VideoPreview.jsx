@@ -5,6 +5,7 @@ import { processImage, imageDataToBinaryArray, findConnectedGroups, } from '../u
 import ColorPicker from '../components/ColorPicker';
 import ThresholdSlider from '../components/ThresholdSlider';
 import DetectionInfo from '../components/DetectionInfo';
+import ProcessButton from '../components/ProcessButton'
 
 export default function VideoPreview() {
     const { filename } = useParams();
@@ -12,6 +13,9 @@ export default function VideoPreview() {
     const [targetColor, setTargetColor] = useState("#ff0000");
     const [threshold, setThreshold] = useState(120);
     const [detectionInfo, setDetectionInfo] = useState(null);
+    const [processing, setProcessing] = useState(false)
+    const [jobId, setJobId] = useState(null)
+    const [processError, setProcessError] = useState(null)
 
     const imageRef = useRef(null);
     const canvasRef = useRef(null);
@@ -67,7 +71,49 @@ export default function VideoPreview() {
 
     useEffect(() => {
         updatePreview();
-    }, [updatePreview])
+    }, [updatePreview]);
+
+    async function handleProcessVideo() {
+    if (processing) return
+
+    setProcessing(true)
+    setProcessError(null)
+    setJobId(null)
+
+    try {
+        const color = targetColor.replace('#', '')
+
+        const params = new URLSearchParams({
+        targetColor: color,
+        threshold: String(threshold),
+        })
+
+        const url =
+        `/api/process/${encodeURIComponent(filename)}?${params}`
+
+        const response = await fetch(url, {
+        method: 'POST',
+        })
+
+        if (!response.ok) {
+        throw new Error(
+            `Failed to start processing (HTTP ${response.status})`
+        )
+        }
+
+        const data = await response.json()
+
+        if (!data.jobId) {
+        throw new Error('Backend did not return a job ID')
+        }
+
+        setJobId(data.jobId)
+    } catch (error) {
+        setProcessError(error.message)
+    } finally {
+        setProcessing(false)
+        }
+    }
 
     return (
     <div className="video-preview">
@@ -104,6 +150,24 @@ export default function VideoPreview() {
         </div>
 
         <DetectionInfo detectionInfo={detectionInfo} />
+
+        <div className="process-section">
+        <ProcessButton
+            onProcess={handleProcessVideo}
+            processing={processing}
+        />
+
+        {jobId && (
+            <p>Processing job started: {jobId}</p>
+        )}
+
+        {processError && (
+            <p className="process-error">
+            Error: {processError}
+            </p>
+        )}
+        </div>
+
     </div>
     )
 }
