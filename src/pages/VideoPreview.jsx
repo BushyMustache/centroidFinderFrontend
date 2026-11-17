@@ -4,12 +4,14 @@ import { useParams } from 'react-router-dom';
 import { processImage, imageDataToBinaryArray, findConnectedGroups, } from '../utils/imageProcessing';
 import ColorPicker from '../components/ColorPicker';
 import ThresholdSlider from '../components/ThresholdSlider';
+import DetectionInfo from '../components/DetectionInfo';
 
 export default function VideoPreview() {
     const { filename } = useParams();
 
     const [targetColor, setTargetColor] = useState("#ff0000");
     const [threshold, setThreshold] = useState(120);
+    const [detectionInfo, setDetectionInfo] = useState(null);
 
     const imageRef = useRef(null);
     const canvasRef = useRef(null);
@@ -35,19 +37,18 @@ export default function VideoPreview() {
             canvas.width,
             canvas.height
         );
-
                 
         const processedImage = processImage(imageData, targetColor, threshold);
-        // Convert the processed pixels into a 0/1 array.
         const binaryImage = imageDataToBinaryArray(processedImage);
 
-        // Find and sort all connected groups.
         const groups = findConnectedGroups(binaryImage);
+        setDetectionInfo({
+            totalGroups: groups.length,
+            largestGroup: groups.length > 0 ? groups[0] : null,
+        });
 
-        // Display the binarized image.
         context.putImageData(processedImage, 0, 0);
 
-        // Draw the centroid of the largest group.
         if (groups.length > 0) {
         const largestGroup = groups[0]
         const { x, y } = largestGroup.centroid
@@ -57,7 +58,6 @@ export default function VideoPreview() {
         context.fillStyle = '#ff0000'
         context.fill()
 
-        // White outline makes the centroid easier to see.
         context.lineWidth = 2
         context.strokeStyle = '#ffffff'
         context.stroke()
@@ -74,7 +74,6 @@ export default function VideoPreview() {
         <h1>Video Preview</h1>
         <h2>{filename}</h2>
 
-        {/* Images side by side */}
         <div className="image-container">
         <div className="preview-panel">
             <h3>Original Image</h3>
@@ -92,7 +91,6 @@ export default function VideoPreview() {
         </div>
         </div>
 
-        {/* Controls underneath the images */}
         <div className="processing-controls">
         <ColorPicker
             color={targetColor}
@@ -104,6 +102,8 @@ export default function VideoPreview() {
             onThresholdChange={setThreshold}
         />
         </div>
+
+        <DetectionInfo detectionInfo={detectionInfo} />
     </div>
     )
 }
