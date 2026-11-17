@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { processImage } from '../utils/imageProcessing';
+import { processImage, imageDataToBinaryArray, findConnectedGroups, } from '../utils/imageProcessing';
 import ColorPicker from '../components/ColorPicker';
 import ThresholdSlider from '../components/ThresholdSlider';
 
@@ -34,11 +34,35 @@ export default function VideoPreview() {
             0,
             canvas.width,
             canvas.height
-        )
+        );
 
+                
         const processedImage = processImage(imageData, targetColor, threshold);
+        // Convert the processed pixels into a 0/1 array.
+        const binaryImage = imageDataToBinaryArray(processedImage);
 
+        // Find and sort all connected groups.
+        const groups = findConnectedGroups(binaryImage);
+
+        // Display the binarized image.
         context.putImageData(processedImage, 0, 0);
+
+        // Draw the centroid of the largest group.
+        if (groups.length > 0) {
+        const largestGroup = groups[0]
+        const { x, y } = largestGroup.centroid
+
+        context.beginPath()
+        context.arc(x, y, 6, 0, 2 * Math.PI)
+        context.fillStyle = '#ff0000'
+        context.fill()
+
+        // White outline makes the centroid easier to see.
+        context.lineWidth = 2
+        context.strokeStyle = '#ffffff'
+        context.stroke()
+        }
+
     }, [targetColor, threshold]);
 
     useEffect(() => {

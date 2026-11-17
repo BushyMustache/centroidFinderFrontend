@@ -44,3 +44,111 @@ export function processImage(imageData, targetColor, threshold) {
 
     return output;
 }
+
+export function findConnectedGroups(binaryImage) {
+  const height = binaryImage.length
+
+  if (height === 0 || binaryImage[0].length === 0) {
+    throw new Error('Binary image cannot be empty')
+  }
+
+  const width = binaryImage[0].length
+  const visited = Array.from(
+    { length: height },
+    () => Array(width).fill(false)
+  )
+
+  const groups = []
+
+  const moves = [
+    [0, -1],
+    [0, 1],
+    [-1, 0],
+    [1, 0],
+  ]
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      if (binaryImage[row][col] !== 1 || visited[row][col]) {
+        continue
+      }
+
+      let pixels = 0
+      let sumX = 0
+      let sumY = 0
+
+      const stack = [[row, col]]
+      visited[row][col] = true
+
+      while (stack.length > 0) {
+        const [currentRow, currentCol] = stack.pop()
+
+        pixels++
+        sumX += currentCol
+        sumY += currentRow
+
+        for (const [dr, dc] of moves) {
+          const nextRow = currentRow + dr
+          const nextCol = currentCol + dc
+
+          if (
+            nextRow >= 0 &&
+            nextRow < height &&
+            nextCol >= 0 &&
+            nextCol < width &&
+            binaryImage[nextRow][nextCol] === 1 &&
+            !visited[nextRow][nextCol]
+          ) {
+            visited[nextRow][nextCol] = true
+            stack.push([nextRow, nextCol])
+          }
+        }
+      }
+
+      groups.push({
+        size: pixels,
+        centroid: {
+          x: Math.trunc(sumX / pixels),
+          y: Math.trunc(sumY / pixels),
+        },
+      })
+    }
+  }
+
+  groups.sort((a, b) => {
+  if (a.size !== b.size) {
+    return b.size - a.size
+  }
+
+  if (a.centroid.x !== b.centroid.x) {
+    return b.centroid.x - a.centroid.x
+  }
+
+  return b.centroid.y - a.centroid.y
+})
+
+  return groups
+}
+
+export function imageDataToBinaryArray(imageData) {
+  const { width, height, data } = imageData
+  const binaryImage = []
+
+  for (let y = 0; y < height; y++) {
+    const row = []
+
+    for (let x = 0; x < width; x++) {
+      const index = (y * width + x) * 4
+
+      // White pixels are foreground (1).
+      // Black pixels are background (0).
+      const isWhite = data[index] === 255
+
+      row.push(isWhite ? 1 : 0)
+    }
+
+    binaryImage.push(row)
+  }
+
+  return binaryImage
+}
