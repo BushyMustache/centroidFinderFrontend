@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import VideoChooser from './pages/VideoChooser.jsx';
 import VideoPreview from './pages/VideoPreview.jsx';
 
+import './App.css'
+
 function App() {
 
   return (
