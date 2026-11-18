@@ -6,6 +6,7 @@ import ColorPicker from '../components/ColorPicker';
 import ThresholdSlider from '../components/ThresholdSlider';
 import DetectionInfo from '../components/DetectionInfo';
 import ProcessButton from '../components/ProcessButton'
+import JobStatus from '../components/JobStatus';
 
 export default function VideoPreview() {
     const { filename } = useParams();
@@ -152,21 +153,15 @@ export default function VideoPreview() {
         <DetectionInfo detectionInfo={detectionInfo} />
 
         <div className="process-section">
-        <ProcessButton
-            onProcess={handleProcessVideo}
-            processing={processing}
-        />
-
-        {jobId && (
-            <p>Processing job started: {jobId}</p>
-        )}
-
+        <ProcessButton onProcess={handleProcessVideo} processing={processing} />
         {processError && (
             <p className="process-error">
             Error: {processError}
             </p>
         )}
-        </div>
+
+        <JobStatus jobId={jobId} />
+        </div> 
 
     </div>
     )

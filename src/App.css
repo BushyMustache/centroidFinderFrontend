@@ -292,3 +292,26 @@
   color: #dc2626;
   margin-top: 12px;
 }
+
+.job-status {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.job-status a {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 20px;
+  background-color: #16a34a;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.job-status a:hover {
+  background-color: #15803d;
+}
