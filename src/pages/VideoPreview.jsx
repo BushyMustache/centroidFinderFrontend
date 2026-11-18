@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { processImage, imageDataToBinaryArray, findConnectedGroups, } from '../utils/imageProcessing';
 import ColorPicker from '../components/ColorPicker';
@@ -20,6 +20,7 @@ export default function VideoPreview() {
 
     const imageRef = useRef(null);
     const canvasRef = useRef(null);
+    const navigate = useNavigate()
 
     const thumbnailUrl = `/api/thumbnail/${encodeURIComponent(filename)}`;
 
@@ -55,17 +56,17 @@ export default function VideoPreview() {
         context.putImageData(processedImage, 0, 0);
 
         if (groups.length > 0) {
-        const largestGroup = groups[0]
-        const { x, y } = largestGroup.centroid
+        const largestGroup = groups[0];
+        const { x, y } = largestGroup.centroid;
 
-        context.beginPath()
-        context.arc(x, y, 6, 0, 2 * Math.PI)
-        context.fillStyle = '#ff0000'
-        context.fill()
+        context.beginPath();
+        context.arc(x, y, 6, 0, 2 * Math.PI);
+        context.fillStyle = '#ff0000';
+        context.fill();
 
-        context.lineWidth = 2
-        context.strokeStyle = '#ffffff'
-        context.stroke()
+        context.lineWidth = 2;
+        context.strokeStyle = '#ffffff';
+        context.stroke();
         }
 
     }, [targetColor, threshold]);
@@ -75,49 +76,57 @@ export default function VideoPreview() {
     }, [updatePreview]);
 
     async function handleProcessVideo() {
-    if (processing) return
+    if (processing) return;
 
-    setProcessing(true)
-    setProcessError(null)
-    setJobId(null)
+    setProcessing(true);
+    setProcessError(null);
+    setJobId(null);
 
     try {
-        const color = targetColor.replace('#', '')
+        const color = targetColor.replace('#', '');
 
         const params = new URLSearchParams({
         targetColor: color,
         threshold: String(threshold),
-        })
+        });
 
         const url =
         `/api/process/${encodeURIComponent(filename)}?${params}`
 
         const response = await fetch(url, {
         method: 'POST',
-        })
+        });
 
         if (!response.ok) {
         throw new Error(
             `Failed to start processing (HTTP ${response.status})`
-        )
-        }
+            );
+        };
 
-        const data = await response.json()
+        const data = await response.json();
 
         if (!data.jobId) {
-        throw new Error('Backend did not return a job ID')
-        }
+            throw new Error('Backend did not return a job ID');
+        };
 
-        setJobId(data.jobId)
+        setJobId(data.jobId);
     } catch (error) {
-        setProcessError(error.message)
+        setProcessError(error.message);
     } finally {
-        setProcessing(false)
+        setProcessing(false);
         }
     }
 
     return (
     <div className="video-preview">
+
+        <button
+            type="button"
+            className="back-button"
+            onClick={() => navigate('/videos')}
+        >
+            Back to Videos
+        </button>
         <h1>Video Preview</h1>
         <h2>{filename}</h2>
 

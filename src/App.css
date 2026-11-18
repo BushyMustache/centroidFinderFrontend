@@ -315,3 +315,18 @@
 .job-status a:hover {
   background-color: #15803d;
 }
+
+.back-button {
+  align-self: flex-start;
+  padding: 10px 16px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid #888;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background: rgba(128, 128, 128, 0.15);
+}
