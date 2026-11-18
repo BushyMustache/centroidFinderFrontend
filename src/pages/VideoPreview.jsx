@@ -7,6 +7,7 @@ import ThresholdSlider from '../components/ThresholdSlider';
 import DetectionInfo from '../components/DetectionInfo';
 import ProcessButton from '../components/ProcessButton'
 import JobStatus from '../components/JobStatus';
+import TimestampSelector from '../components/TimestampSelector';
 
 export default function VideoPreview() {
     const { filename } = useParams();
@@ -17,12 +18,14 @@ export default function VideoPreview() {
     const [processing, setProcessing] = useState(false)
     const [jobId, setJobId] = useState(null)
     const [processError, setProcessError] = useState(null)
+    const [timestamp, setTimestamp] = useState(0)
+    const [duration, setDuration] = useState(0) 
 
     const imageRef = useRef(null);
     const canvasRef = useRef(null);
     const navigate = useNavigate()
 
-    const thumbnailUrl = `/api/thumbnail/${encodeURIComponent(filename)}`;
+    const thumbnailUrl = `/api/thumbnail/${encodeURIComponent(filename)}?time=${timestamp}`;
 
     const updatePreview = useCallback(() => {
         const image = imageRef.current;
@@ -74,6 +77,11 @@ export default function VideoPreview() {
     useEffect(() => {
         updatePreview();
     }, [updatePreview]);
+
+    useEffect(() => {
+    setTimestamp(0);
+    setDuration(0);
+    }, [filename]);
 
     async function handleProcessVideo() {
     if (processing) return;
@@ -129,6 +137,26 @@ export default function VideoPreview() {
         </button>
         <h1>Video Preview</h1>
         <h2>{filename}</h2>
+
+        <video
+            key={filename}
+            src={`/videos/${encodeURIComponent(filename)}`}
+            preload="metadata"
+            style={{ display: 'none' }}
+            onLoadedMetadata={(event) => {
+                const videoDuration = event.currentTarget.duration
+
+                if (Number.isFinite(videoDuration)) {
+                setDuration(videoDuration)
+                }
+            }}
+        />
+
+        <TimestampSelector
+            timestamp={timestamp}
+            duration={duration}
+            onTimestampChange={setTimestamp}
+        />
 
         <div className="image-container">
         <div className="preview-panel">

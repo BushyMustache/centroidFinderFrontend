@@ -330,3 +330,58 @@
 .back-button:hover {
   background: rgba(128, 128, 128, 0.15);
 }
+
+
+.timestamp-selector {
+  width: 100%;
+  max-width: 650px;
+  margin: 24px auto;
+  text-align: center;
+}
+
+.timestamp-selector h3 {
+  margin-bottom: 16px;
+}
+
+.timestamp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.timestamp-controls input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.timestamp-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timestamp-input input[type="number"] {
+  width: 85px;
+  padding: 8px;
+  border: 1px solid #888;
+  border-radius: 6px;
+}
+
+.timestamp-selector p {
+  margin-top: 12px;
+  color: #888;
+}
+
+@media (max-width: 650px) {
+  .timestamp-controls {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .timestamp-controls input[type="range"] {
+    width: 100%;
+    flex: none;
+  }
+}
