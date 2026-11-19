@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
 import { processImage, imageDataToBinaryArray, findConnectedGroups, } from '../utils/imageProcessing';
 import ColorPicker from '../components/ColorPicker';
 import ThresholdSlider from '../components/ThresholdSlider';
