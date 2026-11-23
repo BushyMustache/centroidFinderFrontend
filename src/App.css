@@ -363,6 +363,20 @@ input[type="color"] {
   color: #f87171;
 }
 
+.download-csv-button {
+  padding: 13px 30px;
+  border: 1px solid #412D15;
+  border-radius: 9px;
+  background: #140d07;
+  color: #E1DCC9;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.download-csv-button:hover:not(:disabled) {
+  background: #020202;
+}
+
 /* Processing job status */
 
 .job-status {
@@ -384,7 +398,7 @@ input[type="color"] {
   margin-top: 14px;
   padding: 11px 22px;
   border-radius: 8px;
-  background: #E1DCC9;
+  background: #140d07;
   color: #E1DCC9;
   font-weight: 600;
   text-decoration: none;
@@ -392,7 +406,7 @@ input[type="color"] {
 }
 
 .job-status a:hover {
-  background: #E1DCC9;
+  background: #1f150c;
 }
 
 /* =========================================
