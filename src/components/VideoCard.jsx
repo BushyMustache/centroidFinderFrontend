@@ -1,16 +1,41 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
-export default function VideoCard({ filename }) {
-    const navigate = useNavigate();
+function VideoCard({ filename }) {
+  const navigate = useNavigate()
 
-    function handleClick() {
-        navigate(`/preview/${encodeURIComponent(filename)}`);
-    }
+  const thumbnailUrl =
+    `/api/thumbnail/${encodeURIComponent(filename)}`
 
-    return (
-        <div className="video-card" onClick={handleClick}>
-            <h3>{filename}</h3>
-            <p>Click to preview video</p>
-        </div>
-    )
+  function openVideo() {
+    navigate(`/preview/${encodeURIComponent(filename)}`)
+  }
+
+  return (
+    <button
+      type="button"
+      className="video-card"
+      onClick={openVideo}
+      aria-label={`Open ${filename}`}
+    >
+      <div className="video-card-image">
+        <img
+          src={thumbnailUrl}
+          alt={`Thumbnail for ${filename}`}
+          loading="lazy"
+        />
+
+        <span className="video-card-play">
+          ▶
+        </span>
+      </div>
+
+      <div className="video-card-details">
+        <span className="video-card-name" title={filename}>
+          {filename}
+        </span>
+      </div>
+    </button>
+  )
 }
+
+export default VideoCard
