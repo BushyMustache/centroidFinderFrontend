@@ -77,7 +77,7 @@ if (!jobId) return null
             <p>Processing completed successfully!</p>
 
             {result && (
-            <a href={result} download>
+            <a className="download-csv-button"href={result} download>
                 Download CSV Results
             </a>
             )}

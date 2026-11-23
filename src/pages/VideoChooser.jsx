@@ -1,25 +1,55 @@
-import useVideos from "../hooks/useVideos";
-import VideoCard from "../components/VideoCard";
+import useVideos from '../hooks/useVideos'
+import VideoCard from '../components/VideoCard'
 
-export default function VideoChooser() {
-    const { videos, loading, error } = useVideos();
+function VideoChooser() {
+  const { videos, loading, error } = useVideos()
 
-    if (loading) return <h2>Loading videos...</h2>
-
-    if (error) return <p>Error: {error}</p>
-
-    return (
-        <div className="video-chooser">
-            <h1>Centroid Finder</h1>
-            <p>Select a video to begin processing</p>
-
-            <div className="video-list">
-                {videos.map((video) => (
-                    <div key={video} className="video-card">
-                        <VideoCard key={video} filename={video} />
-                    </div>
-                ))}
-            </div>
+  return (
+    <main className="video-library">
+      <header className="library-header">
+        <div className="library-brand">
+          <div>
+            <h2>Centroid Finder</h2>
+          </div>
         </div>
-    )
+      </header>
+
+      <section className="library-content">
+        <div className="library-heading">
+          <div>
+            <h1>Select a video</h1>
+            <p>
+              Choose a video to configure color detection, track centroids, and generate a CSV of the results
+            </p>
+          </div>
+        </div>
+
+        {loading && <p>Loading videos...</p>}
+
+        {error && (
+          <p className="process-error">{error}</p>
+        )}
+
+        {!loading && !error && videos.length === 0 && (
+          <div className="empty-library">
+            No videos found. Add a video to your
+            processor's sampleInput directory.
+          </div>
+        )}
+
+        {!loading && !error && videos.length > 0 && (
+          <div className="video-grid">
+            {videos.map((filename) => (
+              <VideoCard
+                key={filename}
+                filename={filename}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  )
 }
+
+export default VideoChooser

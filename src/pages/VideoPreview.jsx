@@ -83,9 +83,9 @@ export default function VideoPreview() {
     }, [filename]);
 
     async function handleProcessVideo() {
-    if (processing) return;
+    if (processing || jobId) return;
 
-    setProcessing(true);
+    setProcessing(false);
     setProcessError(null);
     setJobId(null);
 
@@ -189,14 +189,24 @@ export default function VideoPreview() {
         <DetectionInfo detectionInfo={detectionInfo} />
 
         <div className="process-section">
-        <ProcessButton onProcess={handleProcessVideo} processing={processing} />
-        {processError && (
-            <p className="process-error">
-            Error: {processError}
-            </p>
-        )}
+            {!processing && !jobId && (
+                <ProcessButton
+                onProcess={handleProcessVideo}
+                processing={processing}
+                />
+            )}
 
-        <JobStatus jobId={jobId} />
+            {processing && (
+                <p>Starting video processing...</p>
+            )}
+
+            {processError && (
+                <p className="process-error">
+                Error: {processError}
+                </p>
+            )}
+
+            <JobStatus jobId={jobId} />
         </div> 
 
     </div>
