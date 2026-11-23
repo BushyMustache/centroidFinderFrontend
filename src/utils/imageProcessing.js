@@ -1,4 +1,4 @@
-export function calculateColorDistance(colorA, colorB) {
+function calculateColorDistance(colorA, colorB) {
     const redDiff = colorB.r - colorA.r;
     const greenDiff = colorB.g - colorA.g;
     const blueDiff = colorB.b - colorA.b;
@@ -8,6 +8,26 @@ export function calculateColorDistance(colorA, colorB) {
         greenDiff ** 2 +
         blueDiff ** 2
     )
+}
+
+function calculateOutput(pixels, target, output, threshold) {
+  for (let i = 0; i < pixels.length; i += 4) {
+    const current = {
+        r: pixels[i],
+        g: pixels[i + 1],
+        b: pixels[i + 2]
+    };
+    
+    const distance = calculateColorDistance(current, target);
+
+    const matches = distance <= threshold;
+    const value = matches ? 255 : 0;
+
+    output.data[i] = value;
+    output.data[i + 1] = value;
+    output.data[i + 2] = value;
+    output.data[i + 3] = 255;
+  }
 }
 
 export function processImage(imageData, targetColor, threshold) {
@@ -24,32 +44,16 @@ export function processImage(imageData, targetColor, threshold) {
         imageData.height
     )
 
-    for (let i = 0; i < pixels.length; i += 4) {
-        const current = {
-            r: pixels[i],
-            g: pixels[i + 1],
-            b: pixels[i + 2]
-        };
-        
-        const distance = calculateColorDistance(current, target);
-
-        const matches = distance <= threshold;
-        const value = matches ? 255 : 0;
-
-        output.data[i] = value;
-        output.data[i + 1] = value;
-        output.data[i + 2] = value;
-        output.data[i + 3] = 255;
-    }
+    calculateOutput(pixels, target, output, threshold);
 
     return output;
 }
 
 export function findConnectedGroups(binaryImage) {
-  const height = binaryImage.length
+  const height = binaryImage.length;
 
   if (height === 0 || binaryImage[0].length === 0) {
-    throw new Error('Binary image cannot be empty')
+    throw new Error('Binary image cannot be empty');
   }
 
   const width = binaryImage[0].length
